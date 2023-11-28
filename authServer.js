@@ -22,18 +22,23 @@ app.post('/token', (req, res) => {
 })
 
 app.post('/register', async (req, res) => {
-    const user = users.find(user => user.name === req.body.name)
-    if (user != null) {
-        return res.status(409).send('User already exists')
+    const user_name = users.find(user => user.name === req.body.name)
+    const user_mail = users.find(user => user.email === req.body.email)
+    if (user_name != null) {
+        return res.status(400).send({ error: 'true', message: 'Name already taken' })
+    } 
+    if (user_mail != null) {
+        return res.status(400).send({ error: 'true', message: 'Email already taken' })
     }
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
         const user = {
             name: req.body.name,
+            email: req.body.email,
             password: hashedPassword
         }
         users.push(user)
-        res.status(201).send('User successfully created')
+        res.status(201).send({ error: 'false', message: 'User successfully created' })
     } catch {
         res.status(500).send()
     }
@@ -45,18 +50,18 @@ app.delete('/logout', (req, res) => {
 })
 
 app.post('/login', async (req, res) => {
-    const user = users.find(user => user.name === req.body.name)
+    const user = users.find(user => user.email === req.body.email)
     if (user == null) {
-        return res.status(400).send('User not found')
+        return res.status(404).send({ error: 'true', message: 'User not found' })
     }
     try {
         if (await bcrypt.compare(req.body.password, user.password)) {
             const accessToken = generateAccessToken(user)
             const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
             refreshTokens.push(refreshToken)
-            res.json({ accessToken: accessToken, refreshToken: refreshToken }).send('Success')
+            res.json({ accessToken: accessToken, refreshToken: refreshToken }).send({ error: 'false', message: 'Success' })
         } else {
-            res.send('Not Allowed')
+            res.send({ error: 'true', message: 'Password does not match' })
         }
     } catch {
         res.status(500).send()
