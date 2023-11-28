@@ -4,10 +4,12 @@ const express = require('express')
 const app = express()
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const cors = require('cors')
 
 const users = require('./users')
 const refreshTokens = require('./refreshTokens')
 
+app.use(cors())
 app.use(express.json())
 
 app.post('/token', (req, res) => {
