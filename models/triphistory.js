@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   TripHistory.init({
     userID: DataTypes.INTEGER,
     driverID: DataTypes.INTEGER,
+    transactionID: DataTypes.STRING,
     fare: DataTypes.INTEGER
   }, {
     sequelize,

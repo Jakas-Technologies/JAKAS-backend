@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   Trip.init({
     userID: { type: DataTypes.INTEGER, unique: true },
     driverID: DataTypes.INTEGER,
+    transactionID: DataTypes.STRING,
     fare: DataTypes.INTEGER,
     onProgress: DataTypes.BOOLEAN,
     isPaid: DataTypes.BOOLEAN
