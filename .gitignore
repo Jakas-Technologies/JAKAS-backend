@@ -1,2 +1,8 @@
 node_modules
 .env
+key.json
+cloud-sql-proxy.exe
+refreshTokens.js
+.\users.js
+index.html
+.\authServer.js
