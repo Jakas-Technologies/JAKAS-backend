@@ -25,6 +25,9 @@ module.exports = {
           as: "id",
         },
       },
+      transactionID: {
+        type: Sequelize.STRING
+      },
       fare: {
         type: Sequelize.INTEGER
       },

@@ -20,6 +20,9 @@ module.exports = {
       driverID: {
         type: Sequelize.INTEGER
       },
+      transactionID: {
+        type: Sequelize.STRING
+      },
       fare: {
         type: Sequelize.INTEGER
       },
