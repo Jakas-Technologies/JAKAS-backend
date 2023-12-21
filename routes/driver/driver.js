@@ -3,22 +3,24 @@ require('dotenv').config()
 const { Router } = require("express")
 const db = require("../../models")
 const { jwtHandler } = require("../../utils/jwtHandler")
-const { userMiddleware } = require("../user/middleware")
+const { driverMiddleware } = require("../driver/middleware")
 const driverRouter = Router()
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+// const jwt = require('jsonwebtoken')
 
-driverRouter.post('/token', (req, res) => {
-    const refreshToken = req.body.token
-    if (refreshToken == null) return res.sendStatus(401)
-    if (!refreshToken.includes(refreshToken)) return res.sendStatus(403)
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403)
-        const accessToken = generateAccessToken({ name: user.name })
-        res.json({ accessToken: accessToken })
-    })
-})
+// regenerate access token (currently not used)
+// driverRouter.post('/token', (req, res) => {
+//     const refreshToken = req.body.token
+//     if (refreshToken == null) return res.sendStatus(401)
+//     if (!refreshToken.includes(refreshToken)) return res.sendStatus(403)
+//     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+//         if (err) return res.sendStatus(403)
+//         const accessToken = generateAccessToken({ name: user.name })
+//         res.json({ accessToken: accessToken })
+//     })
+// })
 
+// driver registration
 driverRouter.post('/register', async (req, res) => {
     const {
         body: { name, age, licensePlate, routeName, email, password }
@@ -37,6 +39,9 @@ driverRouter.post('/register', async (req, res) => {
     if (routeName == 'Cicaheum-Ciroyom') {
         route = 1
     }
+    if (routeName == 'Antapani-Ciroyom') {
+        route = 2
+    }
     const user = await db.Driver.create({ name, age, licensePlate, routeName, routeId:route, email, password: hashedPassword })
     await db.Geolocation.create({ driverID: user.id })
 
@@ -47,7 +52,7 @@ driverRouter.post('/register', async (req, res) => {
     })
 })
 
-// login function
+// driver login
 driverRouter.post('/login', async (req, res) => {
     const {
         body: { email, password }
@@ -85,11 +90,46 @@ driverRouter.post('/login', async (req, res) => {
     }
 })
 
-// logout function
+// driver update data (currently not used)
+// driverRouter.put(
+//     "/:id",
+//     jwtHandler.verifyToken,
+//     driverMiddleware.userExists,
+//         async (req, res, next) => {
+//         const {
+//             body,
+//             params: { id },
+//             oldUser,
+//         } = req;
+    
+//         if (id !== oldUser.id)
+//             res.status(403).send({
+//             success: false,
+//             message: "You are not authorized to carry out this action",
+//             });
+    
+//         const [, [user]] = await db.Driver.update(
+//             {
+//             name: body.name || oldUser.name,
+//             password: body.password || oldUser.password,
+//             email: body.email || oldUser.email,
+//             },
+//             { where: { id }, returning: true }
+//         );
+    
+//         res.status(200).send({
+//             success: true,
+//             message: "user successfully updated",
+//             user,
+//         })
+//     }
+// )
+
+// driver logout
 driverRouter.delete(
     '/:id/logout',
     jwtHandler.verifyToken,
-    userMiddleware.userExists, async (req, res, next) => {
+    driverMiddleware.userExists, async (req, res, next) => {
         const {
             params: { id },
             oldUser,
@@ -98,13 +138,12 @@ driverRouter.delete(
             return res.status(403).send({
                 success: false,
                 message: "You are not authorized to carry out this action",
-            });
-        const users = await db.Driver.update({ accessToken: null, refreshToken: null }, { where: { id } })
+            })
+        await db.Driver.update({ accessToken: null, refreshToken: null }, { where: { id } })
         return res.status(200).send({
             success: true,
             message: "driver successfully logged out",
-            users,
-        });
+        })
     }
 )
 
