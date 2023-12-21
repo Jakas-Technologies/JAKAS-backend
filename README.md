@@ -35,6 +35,7 @@ This repository facilitates the backend of JAKAS Application, including a pre-tr
    DB_HOST='your_database_host'
    DB_DIALECT='your_database_dialect'
 
+   # Payment Gateway Server Key
    MIDTRANS_SERVER_KEY='your_midtrans_server_key'
    ```
     
