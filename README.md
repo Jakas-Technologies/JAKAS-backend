@@ -34,6 +34,8 @@ This repository facilitates the backend of JAKAS Application, including a pre-tr
    DB_DATABASE='your_database_name'
    DB_HOST='your_database_host'
    DB_DIALECT='your_database_dialect'
+
+   MIDTRANS_SERVER_KEY='your_midtrans_server_key'
    ```
     
 
@@ -139,6 +141,18 @@ Response:
 {
     "success": true,
     "message": "login successful",
+    "user": {
+        "id": 1,
+        "name": "jakas user",
+        "age": 15,
+        "userType": "Student",
+        "email": "user1@email.com",
+        "password": "$2b$10$ujRgY1npp0Mgdsr1q1I1t.KMD01p7i0Zy8kIh7rXM3Yr47BAwjVJG",
+        "accessToken": null,
+        "refreshToken": null,
+        "createdAt": "2023-12-18T21:44:45.887Z",
+        "updatedAt": "2023-12-20T04:36:46.050Z"
+    },
     "accessToken": "<generated token>",
     "refreshToken": "<generated token>"
 }
@@ -146,6 +160,59 @@ Response:
 
 The database will be updated with the tokens values
 
+#### POST /jakas/api/track/getJurusan
+
+Submit a POST request with origin and destination coordinates and also the route name (jurusan).
+
+Request:
+```json
+{
+    "location": [
+        [-6.8844557076610755, 107.60639617679556],  // originLng, originLat
+        [-6.900212281711285, 107.59926836517025]    // destinationLng, destinationLat
+    ]
+}
+```
+
+The response will show all available angkot from that route (jurusan).
+
+Response:
+```json
+{
+    "success": true,
+    "message": "location is within the routes",
+    "drivers": [
+        {
+            "id": 3,
+            "name": "jakas driver 3",
+            "age": 52,
+            "licensePlate": "9101GHI",
+            "routeName": "Cicaheum-Ciroyom",
+            "routeId": 1,
+            "email": "driver3@email.com",
+            "password": "$2b$10$0lH2tv4ns.qJ4yJtS11N3eYOrdvBAcbLIILbDhtOWm04wQ9Cz9GAS",
+            "accessToken": null,
+            "refreshToken": null,
+            "createdAt": "2023-12-20T11:28:58.357Z",
+            "updatedAt": "2023-12-20T11:28:58.357Z"
+        },
+        {
+            "id": 1,
+            "name": "jakas driver 1",
+            "age": 42,
+            "licensePlate": "1234ABC",
+            "routeName": "Cicaheum-Ciroyom",
+            "routeId": 1,
+            "email": "driver2@email.com",
+            "password": "$2b$10$Y8bZ9SV57uQ4Cl3lkQib5urdt5gJaLLUG52c2gKRe.z63qUBiZfm6",
+            "accessToken": null,
+            "refreshToken": null,
+            "createdAt": "2023-12-20T11:26:13.891Z",
+            "updatedAt": "2023-12-20T13:09:52.015Z"
+        }
+    ]
+}
+```
 
 #### POST /jakas/api/fare/predict
 
