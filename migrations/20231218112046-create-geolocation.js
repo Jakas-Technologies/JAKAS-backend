@@ -20,12 +20,7 @@ module.exports = {
         type: Sequelize.BOOLEAN,
       },
       trackerID: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "Users",
-          key: "id",
-          as: "id",
-        },
+        type: Sequelize.STRING,
       },
       userID: {
         type: Sequelize.INTEGER,
