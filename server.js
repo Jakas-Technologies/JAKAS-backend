@@ -4,6 +4,7 @@ const http = require('http')
 const socketio = require('socket.io')
 const db = require("./models")
 const { initRoutes } = require("./routes");
+const { onConnection } = require("./socket");
 
 let app = express()
 const port = 3000
@@ -27,12 +28,12 @@ const io = socketio(server, {
     }
 })
 
-io.on('connection', (socket) => {
+io.on('connection', onConnection(io), () => {
     console.log('JAKAS is live and connected')
     console.log(socket.id)
 })
 
-io.use((socket, next) => {
+io.use(async (socket, next) => {
     if (socket.handshake.headers.auth) {
       const { auth } = socket.handshake.headers;
       const token = auth.split(" ")[1];
@@ -40,18 +41,27 @@ io.use((socket, next) => {
         if (err) {
           throw new Error("Authentication error, Invalid Token supplied");
         }
-        const theUser = await db.User.findByPk(decodedToken.id);
-        if (!theUser)
-          throw new Error(
-            "Invalid Email or Password, Kindly contact the admin if this is an anomaly"
-          );
-        socket.theUser = theUser;
-        return next();
+  
+        const user = await db.User.findByPk(decodedToken.id);
+        if (user) {
+          socket.user = user;
+          return next();
+        }
+
+        const driver = await db.Driver.findByPk(decodedToken.id);
+        if (driver) {
+          socket.driver = driver;
+          return next();
+        }
+
+        throw new Error(
+          "Invalid Email or Password, Kindly contact the admin if this is an anomaly"
+        );
       });
     } else {
       throw new Error("Authentication error, Please provide a token");
     }
-});
+  });
 
 server.listen(port, () => {
     console.log(`JAKAS app listening on port ${port}`)
