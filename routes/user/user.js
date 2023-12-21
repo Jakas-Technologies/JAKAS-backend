@@ -17,17 +17,17 @@ userRouter.get("/", async (req, res, next) => {
     });
   });
 
-// refresh token
-userRouter.post('/token', (req, res) => {
-    const refreshToken = req.body.token
-    if (refreshToken == null) return res.sendStatus(401)
-    if (!refreshToken.includes(refreshToken)) return res.sendStatus(403)
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403)
-        const accessToken = generateAccessToken({ name: user.name })
-        res.json({ accessToken: accessToken })
-    })
-})
+// refresh token (currently not used)
+// userRouter.post('/token', (req, res) => {
+//     const refreshToken = req.body.token
+//     if (refreshToken == null) return res.sendStatus(401)
+//     if (!refreshToken.includes(refreshToken)) return res.sendStatus(403)
+//     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+//         if (err) return res.sendStatus(403)
+//         const accessToken = generateAccessToken({ name: user.name })
+//         res.json({ accessToken: accessToken })
+//     })
+// })
 
 //register function
 userRouter.post('/register', async (req, res) => {
@@ -84,6 +84,7 @@ userRouter.post('/login', async (req, res) => {
             res.status(201).send({
                 success: true,
                 message: 'login successful',
+                user,
                 accessToken: accToken,
                 refreshToken: refToken
             })
@@ -125,6 +126,41 @@ userRouter.delete(
     }
 )
 
+// driver update data (currently not used)
+// userRouter.put(
+//     "/:id",
+//     jwtHandler.verifyToken,
+//     userMiddleware.userExists,
+//         async (req, res, next) => {
+//         const {
+//             body,
+//             params: { id },
+//             oldUser,
+//         } = req;
+    
+//         if (id !== oldUser.id)
+//             res.status(403).send({
+//             success: false,
+//             message: "You are not authorized to carry out this action",
+//             });
+    
+//         const [, [user]] = await db.User.update(
+//             {
+//             name: body.name || oldUser.name,
+//             password: body.password || oldUser.password,
+//             email: body.email || oldUser.email,
+//             },
+//             { where: { id }, returning: true }
+//         );
+    
+//         res.status(200).send({
+//             success: true,
+//             message: "user successfully updated",
+//             user,
+//         })
+//     }
+// )
+
 // logout function
 userRouter.delete(
     '/:id/logout',
@@ -139,11 +175,10 @@ userRouter.delete(
                 success: false,
                 message: "You are not authorized to carry out this action",
             });
-        const users = await db.User.update({ accessToken: null, refreshToken: null }, { where: { id } })
+        await db.User.update({ accessToken: null, refreshToken: null }, { where: { id } })
         return res.status(200).send({
             success: true,
-            message: "user successfully deleted",
-            users,
+            message: "user successfully logged out",
         });
     }
 )
