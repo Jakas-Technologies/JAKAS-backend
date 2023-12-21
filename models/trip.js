@@ -16,12 +16,41 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Trip.init({
-    userID: { type: DataTypes.INTEGER, unique: true },
-    driverID: DataTypes.INTEGER,
-    transactionID: DataTypes.STRING,
-    fare: DataTypes.INTEGER,
-    onProgress: DataTypes.BOOLEAN,
-    isPaid: DataTypes.BOOLEAN
+    userID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+          model: "Users", 
+          key: 'id', 
+      },
+      unique: true,
+    },
+    driverID: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: "Drivers", 
+            key: 'id', 
+        },
+    },
+    fare: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    onProgress: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+    },
+    isPaid: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
+    transactionID: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
   }, {
     sequelize,
     modelName: 'Trip',

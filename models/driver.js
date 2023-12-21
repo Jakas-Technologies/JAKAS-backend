@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.hasOne(models.Geolocation, { foreignKey: "id" });
       this.hasMany(models.Trip, { foreignKey: "id" });
+      this.hasOne(models.TripHistory, { foreignKey: "id" });
 
     }
   }

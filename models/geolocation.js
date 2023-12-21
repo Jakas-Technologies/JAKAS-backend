@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false,
     },
     trackerID: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
     },
     userID: {
       type: DataTypes.INTEGER,

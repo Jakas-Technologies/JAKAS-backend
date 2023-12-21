@@ -14,10 +14,30 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   TripHistory.init({
-    userID: DataTypes.INTEGER,
-    driverID: DataTypes.INTEGER,
-    transactionID: DataTypes.STRING,
-    fare: DataTypes.INTEGER
+    userID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+          model: "Users", 
+          key: 'id', 
+      },
+    },
+    driverID: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: "Drivers", 
+            key: 'id', 
+        },
+    },
+    fare: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    transactionID: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
   }, {
     sequelize,
     modelName: 'TripHistory',
